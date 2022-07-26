@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+ <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-head-line">СОТРУДНИКИ</h1>
+					</div>
+
+	<body>
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">СПИСОК СОТРУДНИКОВ</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="table-wrap">
+						<table class="table table-striped">
+						  <thead>
+						    <tr>
+						      <th>№</th>
+								<th>ФИО</th>
+						      <th>Должность</th>
+						      <th>Телефон</th>
+						      <th>Дата начала работы </th>
+						      <th>Зарплата</th>
+						    </tr>
+						  </thead>
+						  <tbody>
+
+
+						  {% for i in employers %}
+						  <tr>
+
+						      <th scope="row"> {{ i.id}}</th>
+						      <td>{{ i.fio }}</td>
+								<td>{{ i.occupation }}</td>
+								<td>{{ i.phone }}</td>
+						      <td>{{ i.date_start }}</td>
+						      <td>{{ i.monthly_salary }}</td>
+						    </tr>
+
+
+
+						  {% endfor %}
+
+						  </tbody>
+
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+
+	</div>
+
+
+			</div>
+
+	</html>
+</div>
+{% endblock %}

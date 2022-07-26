@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+ <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-head-line">Каталог</h1>
+					</div>
+                <title>Каталог</title>
+
+
+	<body>
+<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Каталог</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="table-wrap">
+						<table class="table table-striped">
+						  <thead>
+						    <tr>
+
+						      <th>Артикул</th>
+						      <th>Название</th>
+						      <th>Тип</th>
+						      <th>Размер</th>
+						      <th>Изображение</th>
+						    </tr>
+						  </thead>
+						  <tbody>
+						  {% for item in catalogue %}
+						    <tr>
+						      <th >{{ item.vendor_code }}</th>
+								<td>{{ item.title }}</td>
+						      <td>{{ item.type }}</td>
+						      <td>{{ item.size }}</td>
+						      <td><img src="{{ item.image_url|default_if_none:'#' }}" alt=""></td>
+						    </tr>
+						  {% endfor %}
+						  </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+            </div>
+        </div>
+	</html>
+</div>
+{% endblock %}

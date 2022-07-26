@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Продажа</title>
+</head>
+<body class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <p>
+            <label>Введите артикул</label><br>
+            <input type="text" value="{{ edited_sale.vendor_code }}" />
+        </p>
+        <p>
+            <label>Введите наименование</label><br>
+            <input type="text" value="{{ edited_sale.title }}" />
+        </p>
+         <p>
+            <label>Введите модель</label><br>
+            <input type="text" value="{{ edited_sale.type }}" />
+        </p>
+        <p>
+            <label>Введите размер</label><br>
+            <input type="text" value="{{ edited_sale.size }}" />
+        </p>
+        <p>
+            <label>Введите кол-во</label><br>
+            <input type="number" value="{{ edited_sale.quantity }}" />
+        </p>
+        <p>
+            <label>Введите цену</label><br>
+            <input type="number" value="{{ edited_sale.price }}" />
+        </p>
+        <p>
+            <label>Введите модель</label><br>
+            <input type="number" value="{{ edited_sale.total }}" />
+        </p>
+        <input type="submit" value="Сохранить" >
+    </form>
+</body>
+</html>
