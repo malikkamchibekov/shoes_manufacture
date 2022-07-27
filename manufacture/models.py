@@ -67,7 +67,7 @@ class Employee(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     phone1 = models.CharField(max_length=20, blank=True)
     monthly_salary = models.IntegerField(default=0)
-    objects = models.Manager()
+
 
     def __str__(self):
         return self.fio
@@ -91,6 +91,8 @@ class DailyTimesheet(models.Model):
     def __str__(self):
         return f'{self.date}'
 
+    def __str__(self):
+        return f'{self.employee}'
 
 class DailyProduction(models.Model):
     timesheet = models.ForeignKey('DailyTimesheet', on_delete=models.CASCADE, verbose_name='Табель')
@@ -113,7 +115,37 @@ class DailyProduction(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+    def __str__(self):
+        return f'{self.quantity}'
+
+    def __str__(self):
+        return f'{self.timesheet.date}'
 
 
 
+class DailyPU(models.Model):
+    daily = models.ForeignKey('DailyProduction', on_delete=models.CASCADE, verbose_name='Ежедневка ПУ')
+    quantity = models.PositiveIntegerField(default=0, verbose_name="Кол. пар")
+    package = models.PositiveIntegerField(blank=True)
+    defect_worker = models.PositiveIntegerField(default=0, verbose_name="Брак рабочие")
+    defect_machine = models.PositiveIntegerField(default=0, verbose_name="Брак станок")
+    defect_saya = models.PositiveIntegerField(default=0, verbose_name="Брак САЯ")
+    date = models.DateField(verbose_name="Дата", null=True)
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', )
+    updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+
+    def defect_sum(self):
+        return self.defect_machine + self.defect_worker
+
+    def fetch_package(self):
+        return self.quantity // 6
+
+    def __str__(self):
+        return f'{self.id}'
+
+    def __str__(self):
+        return f'{self.quantity}'
+
+    def __str__(self):
+        return f'{self.timesheet.date}'
 

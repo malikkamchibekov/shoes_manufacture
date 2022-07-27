@@ -1,0 +1,44 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+   <style>
+      .button {
+      background-color: #66FF99;
+      border: none;
+      color: black;
+      padding: 20px 34px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 15px;
+      margin: 4px 2px;
+      cursor: pointer;
+      }
+    </style>
+ <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-head-line">Начисление заработной платы по станку ЭВА с {{q1}} по {{q2}}</h1>
+					</div>
+<body>
+
+
+                <form action="" method="get">
+                    <table style="width:30%">
+                    <tr>
+                        <td><input type="text"  class="datepicker" name="q1"> </td>
+                            <td style="width:5%"> between </td>
+                            <td><input type="text"  class="datepicker" name="q2"></td>
+                        <br>
+
+                        <td><input type="submit" value="Search"></td>
+                    </tr>
+            </table>
+            </form>
+</body>
+                </div>
+                   </div>
+{% endblock %}
