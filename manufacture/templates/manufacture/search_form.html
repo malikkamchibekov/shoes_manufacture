@@ -21,7 +21,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1 class="page-head-line">Начисление заработной платы по станку ЭВА с {{q1}} по {{q2}}</h1>
+                        <h1 class="page-head-line">Начисление заработной платы по станку ПУ </h1>
 					</div>
 <body>
 
@@ -29,12 +29,25 @@
                 <form action="" method="get">
                     <table style="width:30%">
                     <tr>
-                        <td><input type="text"  class="datepicker" name="q1"> </td>
-                            <td style="width:5%"> between </td>
-                            <td><input type="text"  class="datepicker" name="q2"></td>
+                           <td> <label for="date" class="mt-2">    Дата с    </label></td>
                         <br>
 
-                        <td><input type="submit" value="Search"></td>
+
+	                        <td> <input type="date" class="form-control"  name="q1" required/></td>
+
+                        <br>
+
+                            <td><label for="date" class="mt-2">    Дата по     </label> </td>
+                        <br>
+
+
+	                         <td><input type="date" class="form-control"  name="q2" required/></td>
+                        <br>
+
+                        <td> <button type="submit" class="btn btn-primary rounded-pill">   Поиск   </button></td>
+
+
+
                     </tr>
             </table>
             </form>
