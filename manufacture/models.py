@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.models import Sum
 
 class Sale(models.Model):
     client = models.ForeignKey('Client', on_delete=models.PROTECT, verbose_name='Клиент', blank=True)
@@ -87,12 +87,26 @@ class Client(models.Model):
 class DailyTimesheet(models.Model):
     date = models.DateField(verbose_name="Дата")
     employee = models.ForeignKey('Employee', on_delete=models.DO_NOTHING)
+    objects = models.Manager()
+
 
     def __str__(self):
         return f'{self.date}'
 
     def __str__(self):
         return f'{self.employee}'
+
+    @property
+    def emp_sum(self):
+        if self.id:
+            return DailyTimesheet.objects.aggregate(TOTAL=Sum('employee'))['TOTAL']
+        return DailyTimesheet.objects.none()
+
+    @property
+    def emp_count(self, d):
+        if self.date:
+            return DailyTimesheet.objects.filter(date=d).count()
+        return DailyTimesheet.objects.none()
 
 class DailyProduction(models.Model):
     timesheet = models.ForeignKey('DailyTimesheet', on_delete=models.CASCADE, verbose_name='Табель')
@@ -106,11 +120,10 @@ class DailyProduction(models.Model):
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', )
     updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
-    def defect_sum(self):
-        return self.defect_machine + self.defect_worker
+
 
     def fetch_package(self):
-        return self.quantity // 6
+        return f'{self.quantity // 6}'
 
     def __str__(self):
         return f'{self.id}'
@@ -120,5 +133,15 @@ class DailyProduction(models.Model):
 
     def __str__(self):
         return f'{self.timesheet.date}'
+
+    def sum_q(self):  # сумма выработанного количества по 5 сом
+        return f'{self.quantity * 5}'
+
+    def defect_q(self):
+        return f'{self.defect_machine + self.defect_worker + self.defect_saya }' # общее количество брака
+
+    def defect_sum(self):
+        return f'{(self.defect_machine + self.defect_worker + self.defect_saya) * 200 }' # брак по 200 сом за 1 брак
+
 
 
