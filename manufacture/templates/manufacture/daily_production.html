@@ -34,7 +34,9 @@
 						    <tr>
 
 						      <th>№</th>
-						      <th>Название</th>
+						      <th>день</th>
+								<th>Название</th>
+
                                 <th>Модель</th>
 						      <th>Вид модели</th>
 						      <th>Упаковка</th>
@@ -48,6 +50,7 @@
 						  {% for item in production %}
 						    <tr>
 						      <th >{{ item.id }}</th>
+								<th >{{ item.date }}</th>
 								<td>{{ item.catalogue.title }}</td>
 						      <td>{{ item.catalogue.vendor_code }}</td>
 						      <td>{{ item.catalogue.type }}</td>

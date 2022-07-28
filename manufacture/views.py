@@ -5,6 +5,7 @@ from .forms import *
 from datetime import datetime
 from django_tables2 import SingleTableView, tables, RequestConfig
 from django.db.models import Sum
+import datetime
 
 #
 # class DailyProductionTable(tables.Table):
@@ -143,7 +144,7 @@ def add_employer(request):
             try:
                 employer = form.save()
                 employer.save()
-                return redirect('employers')
+                return redirect('employer')
             except:
                 form.add_error(None, "Что-то пошло не так, попробуйте снова")
         else:
@@ -156,7 +157,7 @@ def add_employer(request):
 # отображение списка сотрудников
 def employers(request):
     employer = Employee.objects.all()
-    return render(request, 'manufacture/emp_report.html', {'employers': employer})
+    return render(request, 'manufacture/emp_report.html', {'employer': employer})
 
 
 # отображение ежедневной выработки
@@ -217,3 +218,28 @@ def add_daily_timesheet(request):
 def view_daily_timesheet(request):
     timesheet = DailyTimesheet.objects.all().order_by('-pk')
     return render(request, 'manufacture/daily_timesheet.html', {'timesheet': timesheet})
+
+# поиск по Эва
+
+
+
+def search(request):
+    error = False
+    if 'q1' and 'q2' in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
+
+        if not q1:
+            error = True
+        elif not q2:
+            error = True
+        else:
+            quantities = DailyProduction.objects.filter(date__range=(q1,q2))
+            emp = Employee.objects.all()
+            return render(request, 'manufacture/raschet_pu.html',
+                {'quantities': quantities,
+                 'q1': q1,
+                 'q2': q2,
+                 'emp': emp }
+                )
+    return render(request, 'manufacture/search_form.html', {'error': error})

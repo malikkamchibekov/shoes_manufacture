@@ -45,3 +45,4 @@ class DailyTimesheetForm(forms.ModelForm):
         fields = ['date', 'employee']
 
     date = forms.DateField(widget=SelectDateWidget(empty_label="Nothing"))
+

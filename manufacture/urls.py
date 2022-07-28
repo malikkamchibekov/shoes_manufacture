@@ -17,4 +17,10 @@ urlpatterns = [
     path('new_daily_production', add_daily_production, name='new_daily_production'),
     path('new_daily_timesheet', add_daily_timesheet, name='new_daily_timesheet'),
     path('daily_timesheet', view_daily_timesheet, name='daily_timesheets'),
+    path('search_form', search, name='search_form'),
+    path('raschet_eva', search, name='raschet_eva'),
 ]
+
+print ( DailyProduction.objects.aggregate(TOTAL=Sum('quantity'))['TOTAL'])
+print (DailyTimesheet.objects.filter(date__range=["2022-04-01", "2022-04-30"]))
+print ( DailyProduction.objects.all())

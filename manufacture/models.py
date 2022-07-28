@@ -67,7 +67,7 @@ class Employee(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     phone1 = models.CharField(max_length=20, blank=True)
     monthly_salary = models.IntegerField(default=0)
-    objects = models.Manager()
+
 
     def __str__(self):
         return self.fio
@@ -91,6 +91,8 @@ class DailyTimesheet(models.Model):
     def __str__(self):
         return f'{self.date}'
 
+    def __str__(self):
+        return f'{self.employee}'
 
 class DailyProduction(models.Model):
     timesheet = models.ForeignKey('DailyTimesheet', on_delete=models.CASCADE, verbose_name='Табель')
@@ -113,7 +115,10 @@ class DailyProduction(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+    def __str__(self):
+        return f'{self.quantity}'
 
-
+    def __str__(self):
+        return f'{self.timesheet.date}'
 
 
