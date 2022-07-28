@@ -19,6 +19,8 @@ urlpatterns = [
     path('daily_timesheet', view_daily_timesheet, name='daily_timesheets'),
     path('search_form', search, name='search_form'),
     path('raschet_eva', search, name='raschet_eva'),
+    path('daily_timesheet2', view_daily_timesheet2, name='daily_timesheet2'),
+
 ]
 
 print ( DailyProduction.objects.aggregate(TOTAL=Sum('quantity'))['TOTAL'])

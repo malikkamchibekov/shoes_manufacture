@@ -35,11 +35,9 @@
 								<th >ID</th>
 								<th >Дата</th>
 								{% for d in quantities %}
-
 								<th >{{ d.date }}</th>
-
-
 						  		{% endfor %}
+
 							</tr>
 						  </thead>
 								 <thead>
@@ -55,19 +53,67 @@
 									  {% endfor %}
 						   			 </tr>
 						 		 </thead>
+								<thead>
+									<tr>
+										<th >ID</th>
+										<th >Количество рабочих</th>
+										{% for d in quantities %}
 
+											<th >{{ d.timesheet.emp_sum }}</th>
+
+
+
+									  {% endfor %}
+						   			 </tr>
+						 		 </thead>
+								 <thead>
+									<tr>
+										<th >ID</th>
+										<th >Выработано сумма</th>
+										{% for d in quantities %}
+
+											<th >{{ d.sum_q }}</th>
+
+									  {% endfor %}
+						   			 </tr>
+						 		 </thead>
+								 <thead>
+									<tr>
+										<th >ID</th>
+										<th >Количество брака</th>
+										{% for d in quantities %}
+
+											<th >{{ d.defect_q }}</th>
+
+									  {% endfor %}
+						   			 </tr>
+						 		 </thead>
 										<thead>
 									<tr>
 										<th >ID</th>
-										<th >Сумма</th>
+										<th >Брак сумма</th>
 										{% for d in quantities %}
 
-											<th >{{ d.quantity }}</th>
+											<th >{{ d.defect_sum }}</th>
 
 										{% endfor %}
-						   			 </tr>
-						 		 </thead>
 
+						   			 </tr>
+
+									</thead>
+
+									<thead>
+										<tr>
+											<th >ID</th>
+											  <th>ИТОГО за день сотрудников</th>
+									  			{% for d in quantities %}
+
+											<th >{{ d.emp_count  }} </th>
+
+												{% endfor %}
+
+										</tr>
+						 		 </thead>
 
 
 							<tbody>
@@ -79,11 +125,12 @@
 										    {% for d in quantities %}
 
 											<th >{{ d.quantity  }} </th>
-
-											{% endfor %}
+												{% endfor %}
 											</tr>
 										{% endfor %}
 											<tr>
+
+
 
 											</tr>
 						  </tbody>

@@ -4,7 +4,7 @@ from .models import *
 from .forms import *
 from datetime import datetime
 from django_tables2 import SingleTableView, tables, RequestConfig
-from django.db.models import Sum
+from django.db.models import Sum, Count
 import datetime
 
 #
@@ -243,3 +243,22 @@ def search(request):
                  'emp': emp }
                 )
     return render(request, 'manufacture/search_form.html', {'error': error})
+
+
+
+# отображение ежедневного табеля II version
+def view_daily_timesheet2(request):
+    error = False
+    if 'q1'  in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+
+        if not q1:
+            error = True
+        else:
+            timesheet = DailyTimesheet.objects.filter(date='2022-07-01')
+            total_emp = DailyTimesheet.objects.filter(date='2022-07-01').count()
+            return render(request, 'manufacture/daily_timesheet2.html',{'timesheet': timesheet,'q1': q1, 'total_emp': total_emp })
+
+    return render(request, 'manufacture/daily_timesheet2.html', {'error': error})
+
+
