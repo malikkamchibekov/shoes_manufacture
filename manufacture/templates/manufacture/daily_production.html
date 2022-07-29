@@ -19,7 +19,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12">
-						<h1 class="page-head-line">Ежедневка</h1>
+						<h1 class="page-head-line">Ежедневка за {{ q1 }}</h1>
 						<a href="new_daily_production" class="button">Добавить</a>
 					</div>
                 <title>Выработка ежедневная</title>
@@ -28,6 +28,16 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-15">
+					<form action="" method="get">
+                    		<table style="width:30%">
+                    			<tr>
+                           			<td> <label for="date" class="mt-2">ДАТА</label></td>
+                        		<br>
+	                        		<td> <input type="date" class="form-control"  name="q1"/></td>
+                        		<td><button type="submit" class="btn btn-primary rounded-pill">Поиск</button></td>
+                    			</tr>
+            				</table>
+            			</form>
 					<div class="table-wrap">
 						<table class="table table-striped">
 						  <thead>
@@ -49,11 +59,11 @@
 						  <tbody>
 						  {% for item in production %}
 						    <tr>
-						      <th >{{ item.id }}</th>
+						      <th >{{ forloop.counter }}</th>
 								<th >{{ item.date }}</th>
-								<td>{{ item.catalogue.title }}</td>
-						      <td>{{ item.catalogue.vendor_code }}</td>
-						      <td>{{ item.catalogue.type }}</td>
+								<td>{{ item.catalogue.model }}</td>
+						      <td>{{ item.catalogue.code }}</td>
+						      <td>{{ item.catalogue.color }}</td>
 						      <td>{{ item.package }}</td>
 						      <td>{{ item.quantity }}</td>
 								<td>{{ item.defect_worker }}</td>
@@ -67,6 +77,7 @@
 						      <td></td>
 						      <td></td>
 						      <td></td>
+							  <td>{{ total_package }}</td>
 						      <td>{{ total_quantity }}</td>
 								<td>{{ total_defect_worker }}</td>
                                 <td>{{ total_defect_machine }}</td>

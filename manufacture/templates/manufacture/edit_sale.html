@@ -9,15 +9,15 @@
         {% csrf_token %}
         <p>
             <label>Введите артикул</label><br>
-            <input type="text" value="{{ edited_sale.vendor_code }}" />
+            <input type="text" value="{{ edited_sale.model }}" />
         </p>
         <p>
             <label>Введите наименование</label><br>
-            <input type="text" value="{{ edited_sale.title }}" />
+            <input type="text" value="{{ edited_sale.code }}" />
         </p>
          <p>
             <label>Введите модель</label><br>
-            <input type="text" value="{{ edited_sale.type }}" />
+            <input type="text" value="{{ edited_sale.color }}" />
         </p>
         <p>
             <label>Введите размер</label><br>

@@ -33,9 +33,7 @@
 						  <thead>
 						    <tr>
 								<th>Клиент</th>
-						      <th>Артикул</th>
-						      <th>Название</th>
-						      <th>Тип</th>
+						      <th>Модель, код, цвет</th>
 						      <th>Размер</th>
 						      <th>Кол-во</th>
 						      <th>Цена</th>
@@ -48,14 +46,12 @@
 						  {% for sale in sales %}
 						    <tr>
 								<th >{{ sale.client }}</th>
-						      <th >{{ sale.vendor_code }}</th>
-								<td>{{ sale.title }}</td>
-						      <td>{{ sale.type }}</td>
+						      <th >{{ sale.model }}</th>
 						      <td>{{ sale.size }}</td>
 						      <td>{{ sale.quantity }}</td>
 						      <td>{{ sale.price }}</td>
 								<td>{{ sale.total }}</td>
-								<td>{{ sale.create_time }}</td>
+								<td>{{ sale.date }}</td>
 						      <td><a href="edit_sale/{{ sale.id }}">Изменить</a> | <a href="delete_sale/{{ sale.id }}">Удалить</a></td>
 						    </tr>
 						  {% endfor %}

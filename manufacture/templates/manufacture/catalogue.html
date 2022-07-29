@@ -36,11 +36,12 @@
 						    </tr>
 						  </thead>
 						  <tbody>
+						  {{ catalogue|length }}
 						  {% for item in catalogue %}
 						    <tr>
-						      <th >{{ item.vendor_code }}</th>
-								<td>{{ item.title }}</td>
-						      <td>{{ item.type }}</td>
+						      <th >{{ item.model }}</th>
+								<td>{{ item.code }}</td>
+						      <td>{{ item.color }}</td>
 						      <td>{{ item.size }}</td>
 						      <td><img src="{{ item.image_url|default_if_none:'#' }}" alt=""></td>
 						    </tr>

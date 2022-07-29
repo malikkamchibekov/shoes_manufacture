@@ -78,7 +78,7 @@ def add_new_sale(request):
                 sale = form.save()
                 sale.fetch_total()
                 sale.save()
-                return redirect('salary_total')
+                return redirect('sales')
             except:
                 form.add_error(None, "Что-то пошло не так, попробуйте снова")
         else:
@@ -142,9 +142,8 @@ def add_employer(request):
         form = EmployeeForm(request.POST)
         if form.is_valid():
             try:
-                employer = form.save()
-                employer.save()
-                return redirect('employer')
+                form.save()
+                return redirect('employers')
             except:
                 form.add_error(None, "Что-то пошло не так, попробуйте снова")
         else:
@@ -162,20 +161,31 @@ def employers(request):
 
 # отображение ежедневной выработки
 def view_daily_production(request):
-    production = DailyProduction.objects.all()
-    total_quantity = DailyProduction.objects.aggregate(TOTAL=Sum('quantity'))['TOTAL']
-    total_defect_worker = DailyProduction.objects.aggregate(TOTAL=Sum('defect_worker'))['TOTAL']
-    total_defect_machine = DailyProduction.objects.aggregate(TOTAL=Sum('defect_machine'))['TOTAL']
-    total_defect_saya = DailyProduction.objects.aggregate(TOTAL=Sum('defect_saya'))['TOTAL']
+    error = False
+    if 'q1' in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        if not q1:
+            error = True
+        else:
+            production = DailyProduction.objects.filter(date=q1)
+            total_quantity = DailyProduction.objects.filter(date=q1).aggregate(TOTAL=Sum('quantity'))['TOTAL']
+            total_package = DailyProduction.objects.filter(date=q1).aggregate(TOTAL=Sum('package'))['TOTAL']
+            total_defect_worker = DailyProduction.objects.filter(date=q1).aggregate(TOTAL=Sum('defect_worker'))['TOTAL']
+            total_defect_machine = DailyProduction.objects.filter(date=q1).aggregate(TOTAL=Sum('defect_machine'))['TOTAL']
+            total_defect_saya = DailyProduction.objects.filter(date=q1).aggregate(TOTAL=Sum('defect_saya'))['TOTAL']
 
-    context = {
-        'production': production,
-        'total_quantity': total_quantity,
-        'total_defect_worker': total_defect_worker,
-        'total_defect_machine': total_defect_machine,
-        'total_defect_saya': total_defect_saya,
-    }
-    return render(request, 'manufacture/daily_production.html', context)
+            context = {
+                'q1': q1,
+                'production': production,
+                'total_quantity': total_quantity,
+                'total_package': total_package,
+                'total_defect_worker': total_defect_worker,
+                'total_defect_machine': total_defect_machine,
+                'total_defect_saya': total_defect_saya,
+            }
+            return render(request, 'manufacture/daily_production.html', context)
+
+    return render(request, 'manufacture/daily_production.html', {'error': error})
 
 
 # добавление ежедневки
@@ -184,9 +194,9 @@ def add_daily_production(request):
         form = DailyProductionForm(request.POST)
         if form.is_valid():
             try:
-                daily_production = form.save()
-                daily_production.fetch_package()
-                daily_production.save()
+                daily_production_form = form.save()
+                daily_production_form.fetch_package()
+                daily_production_form.save()
                 return redirect('daily_production')
             except:
                 form.add_error(None, "Что-то пошло не так, попробуйте снова")
@@ -202,9 +212,8 @@ def add_daily_timesheet(request):
         form = DailyTimesheetForm(request.POST)
         if form.is_valid():
             try:
-                daily_timesheet = form.save()
-                daily_timesheet.save()
-                return redirect('daily_timesheet')
+                form.save()
+                return redirect('daily_timesheet2')
             except:
                 form.add_error(None, "Что-то пошло не так, попробуйте снова")
         else:
@@ -214,15 +223,7 @@ def add_daily_timesheet(request):
     return render(request, 'manufacture/new_daily_timesheet.html', {'form': form})
 
 
-# отображение ежедневного табеля
-def view_daily_timesheet(request):
-    timesheet = DailyTimesheet.objects.all().order_by('-pk')
-    return render(request, 'manufacture/daily_timesheet.html', {'timesheet': timesheet})
-
 # поиск по Эва
-
-
-
 def search(request):
     error = False
     if 'q1' and 'q2' in request.GET:
@@ -234,7 +235,7 @@ def search(request):
         elif not q2:
             error = True
         else:
-            quantities = DailyProduction.objects.filter(date__range=(q1,q2))
+            quantities = DailyProduction.objects.filter(date__range=(q1, q2))
             emp = Employee.objects.all()
             return render(request, 'manufacture/raschet_pu.html',
                 {'quantities': quantities,
@@ -245,20 +246,59 @@ def search(request):
     return render(request, 'manufacture/search_form.html', {'error': error})
 
 
-
-# отображение ежедневного табеля II version
-def view_daily_timesheet2(request):
+# отображение ежедневного табеля
+def view_daily_timesheet(request):
     error = False
-    if 'q1'  in request.GET:
+    if 'q1' in request.GET:
         q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
-
         if not q1:
             error = True
         else:
-            timesheet = DailyTimesheet.objects.filter(date='2022-07-01')
-            total_emp = DailyTimesheet.objects.filter(date='2022-07-01').count()
-            return render(request, 'manufacture/daily_timesheet2.html',{'timesheet': timesheet,'q1': q1, 'total_emp': total_emp })
+            timesheet = DailyTimesheet.objects.filter(date=q1)
+            total_emp = DailyTimesheet.objects.filter(date=q1).count()
+            context = {
+                'timesheet': timesheet,
+                'q1': q1,
+                'total_emp': total_emp,
+            }
+            return render(request, 'manufacture/daily_timesheet2.html', context)
 
     return render(request, 'manufacture/daily_timesheet2.html', {'error': error})
 
 
+def view_monthly_production(request):
+    error = False
+    if 'q1' and 'q2' in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
+
+        if not q1:
+            error = True
+        elif not q2:
+            error = True
+        else:
+            productions = DailyProduction.objects.filter(date__range=(q1, q2)).aggregate(TOTAL=Sum('quantity'))['TOTAL']
+            products = Catalogue.objects.all()
+            # col_model = Catalogue.objects.filter(model='model').count()
+            return render(request, 'manufacture/monthly_productions.html',
+                          {'productions': productions,
+                           'q1': q1,
+                           'q2': q2,
+                           'products': products,}
+                           # 'col_model': col_model}
+                          )
+    return render(request, 'manufacture/monthly_productions.html', {'error': error})
+
+
+catalogs = Catalogue.objects.all().values('model', 'code')
+dct = {}
+for catalog in catalogs:
+    if catalog['model'] not in dct:
+        dct[catalog['model']] = 1
+    else:
+        dct[catalog['model']] += 1
+
+print(dct, catalogs)
+
+# col_model = Catalogue.objects.filter(model='Бенто').count()
+# print(col_model)

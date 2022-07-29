@@ -11,7 +11,9 @@ class SaleForm(forms.ModelForm):
 
     class Meta:
         model = Sale
-        fields = ('client', 'vendor_code', 'title', 'type', 'size', 'quantity', 'price', 'total')
+        fields = ('date', 'client', 'model', 'size', 'quantity', 'price', 'total')
+
+    date = forms.DateField(widget=SelectDateWidget(empty_label="Nothing"))
 
 
 class ClientForm(forms.ModelForm):
@@ -29,7 +31,9 @@ class EmployeeForm(forms.ModelForm):
 class DailyProductionForm(forms.ModelForm):
     class Meta:
         model = DailyProduction
-        fields = '__all__'
+        fields = ('date', 'catalogue', 'quantity', 'package', 'defect_worker', 'defect_machine', 'defect_saya')
+
+    date = forms.DateField(widget=SelectDateWidget(empty_label="Nothing"))
 
 
 class CatalogueForm(forms.ModelForm):
