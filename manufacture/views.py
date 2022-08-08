@@ -10,18 +10,6 @@ from .models import*
 import pandas as pd
 from django_pandas.io import read_frame
 import numpy as np
-from .forms import LoginForm, UserRegistrationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
-
-from django.http import HttpResponseNotFound
-from django.shortcuts import render, redirect
-from .models import *
-from .forms import *
-from datetime import datetime
-from django.contrib.auth.decorators import user_passes_test
-
 #
 # class DailyProductionTable(tables.Table):
 #     class Meta:
@@ -411,7 +399,6 @@ def search_pu(request):
             return render(request, 'manufacture/raschet_pu.html', mydict)
     return render(request, 'manufacture/search_form.html', {'error': error})
 
-
 # поиск по станку ЭВА
 def search_eva(request):
     error = False
@@ -441,53 +428,3 @@ def search_eva(request):
 def salary_total1(request):
     salary_t = SalaryTotal.objects.all().order_by('-pk')
     return render(request, 'manufacture/salary_total1.html', {'salary_t': salary_t})
-def home(request):
-    if request.user == 'AnonymousUser':
-        return redirect('login')
-    else:
-        new_user = UserRegistrationForm
-        return render(request, 'index.html', {'new_user': new_user, 'old_user': AuthenticationForm})
-
-
-def register_new(request):
-    if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        if user_form.is_valid():
-
-            new_user = user_form.save(commit=False)
-            print(user_form.cleaned_data['password'])
-            new_user.new_password = user_form.cleaned_data['password']
-            new_user.set_password(user_form.cleaned_data['password'])
-
-
-            new_user.save()
-            return redirect('/')
-        else:
-            print(user_form.errors)
-            print('not ok')
-            return render(request, 'manufacture/register.html', {'register_form': user_form})
-    else:
-        user_form = UserRegistrationForm()
-
-    return render(request, 'manufacture/register.html', {'register_form': user_form})
-
-
-def user_login(request):
-    if request.method == 'POST':
-        print('das')
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(username=cd['username'], password=cd['password'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('/')
-                else:
-                    return HttpResponse('Disabled account')
-            else:
-                return HttpResponse('Invalid login')
-    else:
-        form = LoginForm()
-    return render(request, 'manufacture/login.html', {'form': form})
-
