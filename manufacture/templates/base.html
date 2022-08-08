@@ -37,13 +37,14 @@
             </div>
         </nav>
         <!-- /. NAV TOP  -->
+        {% if user.is_authenticated%}
         <nav class="navbar-default navbar-side" role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav" id="main-menu">
                     <li>
                         <div class="user-img-div">
                             <img src="{% static 'assets/img/user.png' %}" class="img-thumbnail" />
-
+                                {{ user.first_name }} {{ user.last_name }}
                             <div class="inner-text">
                                 USER
                             <br />
@@ -124,7 +125,11 @@
                             <li>
                                 <a href="new_employer"><i class="fa fa-flash "></i>ВВОД НОВЫХ СОТРУДНИКОВ</a>
                             </li>
-
+                             {% if user.is_superuser %}
+                            <li>
+                                <a href="register_new"><i class="fa fa-flash "></i>РЕГИСТРАЦИЯ НОВЫХ СОТРУДНИКОВ</a>
+                            </li>
+                             {% endif %}
 
                         </ul>
                     </li>
@@ -144,6 +149,7 @@
                 </ul>
             </div>
         </nav>
+        {% endif %}
     {% block content %}
     {% endblock %}
 
