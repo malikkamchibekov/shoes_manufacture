@@ -159,8 +159,6 @@ class DailyProduction(models.Model):
     defect_saya = models.PositiveIntegerField(default=0, verbose_name="Брак САЯ")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', )
     updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
-
-
     objects = DataFrameManager()
 
     def fetch_package(self):
@@ -176,7 +174,8 @@ class DailyProduction(models.Model):
     def defect_sum(self):
         return (self.defect_machine + self.defect_worker + self.defect_saya) * 200  # брак по 200 сом за 1 брак
 
-class User(AbstractUser):
-    is_accountant = models.BooleanField(default=False)
-    is_cashier = models.BooleanField(default=False)
-    new_password = models.CharField(max_length=100)
+
+# class User(AbstractUser):
+#     is_accountant = models.BooleanField(default=False)
+#     is_cashier = models.BooleanField(default=False)
+#     new_password = models.CharField(max_length=100)
