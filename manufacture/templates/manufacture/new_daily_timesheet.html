@@ -1,14 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Табель новый</title>
-</head>
-<body>
-  <form method="POST" class="post-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="save btn btn-default">Сохранить</button>
-  </form>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+* {
+    box-sizing: border-box;
+}
+input[type=text], select, textarea {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+label {
+    padding: 10px 10px 12px 0;
+    display: inline-block;
+}
+.container {
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 20px;
+}
+.col-25 {
+    float: left;
+    width: 15%;
+    margin-top: 10px;
+}
+.col-75 {
+    float: left;
+    width: 85%;
+    margin-top: 10px;
+}
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .col-25, .col-75, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+</style>
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="page-head-line">НОВЫЙ ТАБЕЛЬ</h1>
+            </div>
+<!--            <title>НОВЫЙ ПРОДУКТ</title>-->
+	        <body>
+                <section class="ftco-section">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6 text-center mb-5"></div>
+                            </div>
+                            {% csrf_token %}
+                                <form action="{% url 'daily_timesheet2' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>ДАТА</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.date }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>СОТРУДНИК</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.employee }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>СТАВКА СДЕЛЬНАЯ</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.rate }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>КОЛ-ВО ПАР СДЕЛАННОЕ ЗА ДЕНЬ</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.daily_prod_quant }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>ВИД СТАНКА</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.machine_tool }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <br>
+                                        <button type="submit" class="btn btn-lg btn-success">Сохранить</button>
+                                    </div>
+                                </form>
+                        </div>
+                </section>
+            </body>
+        </div>
+    </div>
+</div>
+{% endblock %}

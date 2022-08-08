@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <title>Выработка сводная</title>
 </head>
+<!--Стиль для таблицы-->
 <style>
   table.iksweb{text-decoration: none;border-collapse:collapse;width:100%;text-align:center;}
   table.iksweb th{font-weight:normal;font-size:14px; color:#ffffff;background-color:#354251;}
@@ -12,115 +14,65 @@
   table.iksweb tr:hover{background-color:#f9fafb}
   table.iksweb tr:hover td{color:#354251;cursor:default;}
 </style>
-<body>
-   <form action="" method="get">
-                    <table style="width:30%">
-                    <tr>
-                           <td> <label for="date" class="mt-2">    Дата с    </label></td>
-                        <br>
+
+<!--JS код для подсчета суммы колонки-->
+<script>
+	total = 0
+
+	function sum(number) {
+		total = total + number
+	};
+
+	function get_total(number) {
+		res = total
+		total = 0
+		document.getElementById('total-' + number).innerHTML = res;
+	};
+
+</script>
+
+ <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-head-line">Выработка сводная</h1>
+					</div>
+                <title>ВЫРАБОТКА СВОДНАЯ</title>
 
 
-	                        <td> <input type="date" class="form-control"  name="q1" required/></td>
-
-                        <br>
-
-                            <td><label for="date" class="mt-2">    Дата по     </label> </td>
-                        <br>
-
-
-	                         <td><input type="date" class="form-control"  name="q2" required/></td>
-                        <br>
-
-                        <td> <button type="submit" class="btn btn-primary rounded-pill">   Поиск   </button></td>
-
-
-
-                    </tr>
-            </table>
-            </form>
-<table class="iksweb">
-	<tbody>
-		<tr>
-			<td rowspan="3">Модель</td>
-			<td colspan="{{6}}">{{ production.catalogue.model }} </td>
-			<td colspan="5"></td>
-		</tr>
-		<tr>
-			<td colspan="3">{{ production.catalogue.code }} </td>
-			<td colspan="3"></td>
-			<td colspan="3"></td>
-			<td colspan="2"></td>
-		</tr>
-		<tr>
-			<td>{{ production.catalogue.color }} </td>
-			<td>{{ production.catalogue.color }} </td>
-			<td>{{ production.catalogue.color }} </td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>1</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>3</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>4</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-	</tbody>
-</table>
-</body>
-</html>
+	<body>
+<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h3>Выработка за период</h3>
+				</div>
+			</div>
+			<body>
+			   <form action="" method="get">
+					<table style="width:30%">
+						<tr>
+							<td> <label for="date" class="mt-2">Дата с</label></td>
+						<br>
+							<td> <input type="date" class="form-control"  name="q1" required/></td>
+						<br>
+							<td><label for="date" class="mt-2">Дата по</label> </td>
+						<br>
+							<td><input type="date" class="form-control"  name="q2" required/></td>
+						<br>
+							<td> <button type="submit" class="btn btn-primary rounded-pill">Поиск</button></td>
+						</tr>
+					</table>
+				</form>
+				<table class="iksweb">
+					<tbody>
+						{{ df | safe }}
+					</tbody>
+				</table>
+				</body>
+			</div>
+		</div>
+ 	</div>
+ </div>
+</section>
+{% endblock %}

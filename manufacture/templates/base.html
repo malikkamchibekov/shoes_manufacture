@@ -32,7 +32,7 @@
 
             <div class="header-right">
 
-                <a href="{% static 'login.html' %}" class="btn btn-danger" title="Logout"><i class="fa fa-exclamation-circle fa-2x"></i></a>
+                <a href="/" class="btn btn-danger" title="Logout"><i class="fa fa-exclamation-circle fa-2x"></i></a>
 
             </div>
         </nav>
@@ -45,9 +45,9 @@
                             <img src="{% static 'assets/img/user.png' %}" class="img-thumbnail" />
 
                             <div class="inner-text">
-                                САДЫР ЖАПАРОВ
+                                USER
                             <br />
-                                <small></small>
+                                <small>user</small>
                             </div>
                         </div>
 
@@ -69,19 +69,8 @@
                                 <a href="daily_timesheet2"><i class="fa fa-bell "></i>ЕЖЕДНЕВКА ТАБЕЛЬ СОТРУДНИКОВ</a>
                             </li>
                              <li>
-                                <a href="progress"><i class="fa fa-circle-o "></i>ВЫРАБОТКА В МЕСЯЦ</a>
+                                <a href="monthly_production"><i class="fa fa-circle-o "></i>ВЫРАБОТКА В МЕСЯЦ</a>
                             </li>
-                             <li>
-                                <a href="buttons.html"><i class="fa fa-code "></i>ВЫРАБОТКА СВОДНАЯ</a>
-                            </li>
-                             <li>
-                                <a href="icons.html"><i class="fa fa-bug "></i>МОДЕЛИ</a>
-                            </li>
-                             <li>
-                                <a href="grid.html"><i class="fa fa-eyedropper "></i>Grid</a>
-                            </li>
-
-
                         </ul>
                     </li>
 
@@ -148,7 +137,7 @@
                                 <a href="salary_total"><i class="fa fa-toggle-on"></i>ИТОГОВАЯ ЗАРПЛАТА</a>
                             </li>
                             <li>
-                                <a href="search_form"><i class="fa fa-bell "></i>Расчет по ПУ</a>
+                                <a href="{% url 'raschet_pu' %}"><i class="fa fa-bell "></i>Расчет по ПУ</a>
                             </li>
                         </ul>
                     </li>
@@ -159,7 +148,7 @@
     {% endblock %}
 
     <div id="footer-sec">
-        &copy; 2022 LightCode | Design By : <a href="" target="_blank">Malik and Abdrakhman</a>
+        &copy; 2022 LightCode | Design By : <a href="https://github.com/malikkamchibekov" target="_blank">Me ))</a>
     </div>
     <!-- /. FOOTER  -->
     <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->

@@ -1,14 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
-    <title>Продажа новая</title>
+    <title>Новая ежедневка</title>
 </head>
-<body>
-  <form method="POST" class="post-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="save btn btn-default">Сохранить</button>
-  </form>
-</body>
-</html>
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="page-head-line">Заполнить новую ежедневку</h1>
+            </div>
+                <title>Новая ежедневка</title>
+                <body>
+                <section class="ftco-section">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6 text-center mb-5">
+                                    <h2 class="heading-section">ДОБАВИТЬ ЕЖЕДНЕВКУ</h2>
+                                </div>
+                            </div>
+                        <body>
+                          <form method="POST" class="post-form">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="save btn btn-default">Сохранить</button>
+                          </form>
+                        </body>
+                        </div>
+                    </section>
+                </body>
+            </div>
+        </div>
+    </div>
+{% endblock %}

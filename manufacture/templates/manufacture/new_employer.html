@@ -1,14 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Новый сотрудник</title>
-</head>
-<body>
-  <form method="POST" class="post-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="save btn btn-default">Сохранить</button>
-  </form>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+* {
+    box-sizing: border-box;
+}
+input[type=text], select, textarea {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+label {
+    padding: 10px 10px 12px 0;
+    display: inline-block;
+}
+.container {
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 20px;
+}
+.col-25 {
+    float: left;
+    width: 15%;
+    margin-top: 10px;
+}
+.col-75 {
+    float: left;
+    width: 85%;
+    margin-top: 10px;
+}
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+    .col-25, .col-75, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+</style>
+<div id="page-wrapper">
+    <div id="page-inner">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="page-head-line">НОВЫЙ СОТРУДНИК</h1>
+            </div>
+<!--            <title>НОВЫЙ ПРОДУКТ</title>-->
+	        <body>
+                <section class="ftco-section">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6 text-center mb-5"></div>
+                            </div>
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>СТАТУС</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.active }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>ДАТА НАЧАЛА</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.date_start }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>ДОЛЖНОСТЬ</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.occupation }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>ФИО</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.fio }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>№ ТЕЛЕФОНА</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.phone }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>№ ТЕЛЕФОНА(РЕЗЕРВ)</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.phone1 }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <label>ОКЛАД</label>
+                                        </div>
+                                        <div class="col-75">
+                                            {{ form.monthly_salary }}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <br>
+                                        <br>
+                                        <button type="submit">Сохранить</button>
+                                    </div>
+                                </form>
+                        </div>
+                </section>
+            </body>
+        </div>
+    </div>
+</div>
+{% endblock %}

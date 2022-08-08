@@ -1,9 +1,10 @@
 from django.db import models
 from django.db.models import Sum
+from django_pandas.managers import DataFrameManager
 
 
 class Sale(models.Model):
-    date = models.DateField()
+    date = models.DateField(verbose_name="Дата")
     client = models.ForeignKey('Client', on_delete=models.PROTECT, verbose_name='Клиент', blank=True)
     model = models.ForeignKey('Catalogue', on_delete=models.CASCADE, verbose_name='Mодель')
     size = models.CharField(max_length=40, verbose_name="Размер")
@@ -59,13 +60,13 @@ class SalaryTotal(models.Model):  # общая зарплата
 
 
 class Employee(models.Model):
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=True, verbose_name="Статус сотрудника")
     occupation = models.CharField(max_length=100, blank=True, verbose_name='Должность')
-    date_start = models.DateField(verbose_name="Дата начала работы", blank=True)
+    date_start = models.DateField(verbose_name="Дата начала работы", blank=True, null=True)
     fio = models.CharField(max_length=64, unique=True, verbose_name="ФИО")  # имя фамилия отчество сотрудника
     phone = models.CharField(max_length=20, blank=True, verbose_name="Номер телефона")
     phone1 = models.CharField(max_length=20, blank=True, verbose_name="Дополнительный номер")
-    monthly_salary = models.IntegerField(default=0, blank=True)
+    monthly_salary = models.IntegerField(default=0, blank=True, verbose_name="Ежемесячный оклад")
 
     def __str__(self):
         return f'{self.fio}'
@@ -82,27 +83,41 @@ class Client(models.Model):
         return f'{self.name}, {self.phone}'
 
 
+# Табель сотрудников на ежедневной выработке
 class DailyTimesheet(models.Model):
-    date = models.DateField()
-    employee = models.ForeignKey('Employee', on_delete=models.RESTRICT, )
+    MACHINE_STATUSES = [
+        ('PU', 'ПУ'),
+        ('EVA', 'ЭВА')
+    ]
+    date = models.DateField(verbose_name='Дата')
+    employee = models.ForeignKey('Employee', on_delete=models.RESTRICT, verbose_name='ФИО сотрудника')
+    rate = models.IntegerField(default=0, verbose_name='Ставка за работу')  #
+    daily_prod_quant = models.IntegerField(
+        default=0,
+        verbose_name='Количество выработки за день'
+    )
+    rate_day = models.PositiveIntegerField(blank=True, default=0)
+    machine_tool = models.CharField(max_length=40, blank=True, choices=MACHINE_STATUSES)
     objects = models.Manager()
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['date', 'employee'], name="unique_date_for_employee"
+                fields=['date', 'employee'], name='unique_date_for_employee'
             ),
         ]
 
     def __str__(self):
         return f'{self.date}'
 
+    # функция подсчета общего количества сотрудников
     @property
     def emp_sum(self):
         if self.id:
             return DailyTimesheet.objects.aggregate(TOTAL=Sum('employee'))['TOTAL']
         return DailyTimesheet.objects.none()
 
+    # функция высчитывающая количество вышедших сотрудников на определенную дату
     @property
     def emp_count(self):
         if self.date:
@@ -111,9 +126,13 @@ class DailyTimesheet(models.Model):
 
 
 class DailyProduction(models.Model):
-    date = models.DateField()
-    catalogue = models.ForeignKey('Catalogue', on_delete=models.CASCADE, related_name='catalogues',
-                                  verbose_name="Модель")
+    date = models.DateField(verbose_name='Дата')
+    catalogue = models.ForeignKey(
+        'Catalogue',
+        on_delete=models.CASCADE,
+        related_name='catalogues',
+        verbose_name="Модель"
+    )
     quantity: int = models.IntegerField(default=0, verbose_name="Кол. пар")
     package: int = models.IntegerField(blank=True, verbose_name='Упаковка')
     defect_worker = models.PositiveIntegerField(default=0, verbose_name="Брак рабочие")
@@ -121,6 +140,7 @@ class DailyProduction(models.Model):
     defect_saya = models.PositiveIntegerField(default=0, verbose_name="Брак САЯ")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', )
     updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+    objects = DataFrameManager()
 
     def fetch_package(self):
         self.package = self.quantity // 6
@@ -135,4 +155,8 @@ class DailyProduction(models.Model):
     def defect_sum(self):
         return (self.defect_machine + self.defect_worker + self.defect_saya) * 200  # брак по 200 сом за 1 брак
 
+    class Meta:
+        ordering = ['-date']
+        verbose_name = 'ВЫРАБОТКА'
+        verbose_name_plural = 'ВЫРАБОТКИ'
 
