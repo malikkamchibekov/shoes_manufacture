@@ -1,53 +1,45 @@
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
-from .models import *
 from .forms import *
 from datetime import datetime
+from django_tables2 import SingleTableView, tables, RequestConfig
 from django.db.models import Sum, Count
 import datetime
+from django.shortcuts import render
+from .models import*
 import pandas as pd
 from django_pandas.io import read_frame
 import numpy as np
+#
+# class DailyProductionTable(tables.Table):
+#     class Meta:
+#         model = DailyProduction
+#
+#
+# class DailyProductionList(SingleTableView):
+#     model = DailyProduction
+#     paginate_by = 12
+#     table_class = DailyProductionTable
+#     template_name = "django_tables2/bootstrap.html"
+#
+#
+# def view_daily_production(request):
+#     table = DailyProductionTable(DailyProduction.objects.all())
+#     model = DailyProduction
+#     table_class = DailyProductionTable
+#     RequestConfig(request).configure(table)
+#     return render(request, 'manufacture/daily_production.html', {'table': table})
+
 
 
 def index(request):
     return render(request, 'manufacture/index.html')
 
 
-# отображение ежемесячной выработки
-def monthly_production(request):
-    error = False
-    if 'q1' and 'q2' in request.GET:
-        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
-        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
-
-        if not q1:
-            error = True
-        elif not q2:
-            error = True
-        else:
-            item = DailyProduction.objects.filter(date__range=(q1, q2))
-            # cat_model = Catalogue.objects.values('model')
-            # cat_code = Catalogue.objects.values('code')
-            # cat_color = Catalogue.objects.values('color')
-            # df = read_frame(item)
-            # df = read_frame(item, fieldnames=['date', 'quantity', 'catalogue', 'package', 'defect_worker'])
-            rows = ['date']
-            cols = ['catalogue']
-
-            pt = item.to_pivot_table(values='quantity', rows=rows, cols=cols, aggfunc=np.sum, fill_value=0, margins=True)
-            context = {
-                "df": pt.to_html(),
-            }
-
-            return render(request, 'manufacture/monthly_production.html', context)
-    return render(request, 'manufacture/monthly_production.html', {'error': error})
-
-
 # Продажи общие
-def salary_total(request):
+def sale_total(request):
     sales = Sale.objects.all().order_by('-pk')
-    return render(request, 'manufacture/salary_total.html', {'sales': sales})
+    return render(request, 'manufacture/sale_total.html', {'sales': sales})
 
 
 # Изменение значений в продажах
@@ -64,7 +56,7 @@ def edit_sale(request, id):
             edited_sale.price = request.POST.get("price")
             edited_sale.total = request.POST.get("total")
             edited_sale.save()
-            return redirect('salary_total')
+            return redirect('sale_total')
         else:
             return render(request, "manufacture/edit_sale.html", {"edited_sale": edited_sale})
     except Sale.DoesNotExist:
@@ -76,7 +68,7 @@ def delete_sale(request, id):
     try:
         deleted_sale = Sale.objects.get(id=id)
         deleted_sale.delete()
-        return redirect('salary_total')
+        return redirect('sale_total')
     except Sale.DoesNotExist:
         return HttpResponseNotFound("<h2>Продажа не найдена</h2>")
 
@@ -153,9 +145,11 @@ def add_employer(request):
     if request.method == 'POST':
         form = EmployeeForm(request.POST)
         if form.is_valid():
-            employer = form.save(commit=False)
-            employer.save()
-            return redirect('employers')
+            try:
+                form.save()
+                return redirect('employers')
+            except:
+                form.add_error(None, "Что-то пошло не так, попробуйте снова")
         else:
             form = EmployeeForm()
     else:
@@ -218,25 +212,68 @@ def add_daily_production(request):
     return render(request, 'manufacture/new_daily_production.html', {'form': form})
 
 
-# добавление ежедневного табеля сотрудников
 def add_daily_timesheet(request):
     if request.method == 'POST':
         form = DailyTimesheetForm(request.POST)
         if form.is_valid():
-            try:
-                form.save()
+                instance = form.save(commit=False)
+                # instance.rate_day = instance.rate * instance.daily_prod_quant  # общее количество выработки одного сотрудника
+                instance.save()
                 return redirect('daily_timesheet2')
-            except:
-                form.add_error(None, "Что-то пошло не так, попробуйте снова")
         else:
             form = DailyTimesheetForm()
     else:
         form = DailyTimesheetForm()
+
     return render(request, 'manufacture/new_daily_timesheet.html', {'form': form})
 
 
 # поиск по Эва
-def search(request):
+# def search(request):
+#     error = False
+#     if 'q1' and 'q2' in request.GET:
+#         q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+#         q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
+#
+#         if not q1:
+#             error = True
+#         elif not q2:
+#             error = True
+#         else:
+#             quantities = DailyProduction.objects.filter(date__range=(q1, q2))
+#             emp = Employee.objects.all()
+#             return render(request, 'manufacture/raschet_pu.html',
+#                           {'quantities': quantities,
+#                            'q1': q1,
+#                            'q2': q2,
+#                            'emp': emp}
+#                           )
+#     return render(request, 'manufacture/search_form.html', {'error': error})
+
+
+# отображение ежедневного табеля
+def view_daily_timesheet(request):
+    error = False
+    if 'q1' in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        if not q1:
+            error = True
+        else:
+            timesheet = DailyTimesheet.objects.filter(date=q1)
+            total_emp = DailyTimesheet.objects.filter(date=q1).count()
+            total_prod = DailyTimesheet.objects.filter(date=q1).aggregate(TOTAL=Sum('daily_prod_quant'))['TOTAL']
+            context = {
+                'timesheet': timesheet,
+                'q1': q1,
+                'total_emp': total_emp,
+                'total_prod': total_prod,
+            }
+            return render(request, 'manufacture/daily_timesheet2.html', context)
+
+    return render(request, 'manufacture/daily_timesheet2.html', {'error': error})
+
+
+def view_monthly_production(request):
     error = False
     if 'q1' and 'q2' in request.GET:
         q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
@@ -247,37 +284,95 @@ def search(request):
         elif not q2:
             error = True
         else:
-            quantities = DailyProduction.objects.filter(date__range=(q1, q2))
-            emp = Employee.objects.all()
-            return render(request, 'manufacture/raschet_pu.html',
+            productions = DailyProduction.objects.filter(date__range=(q1, q2)).aggregate(TOTAL=Sum('quantity'))['TOTAL']
+            products = Catalogue.objects.all()
+            # col_model = Catalogue.objects.filter(model='model').count()
+            return render(request, 'manufacture/monthly_productions.html',
+                          {'productions': productions,
+                           'q1': q1,
+                           'q2': q2,
+                           'products': products, }
+                          # 'col_model': col_model}
+                          )
+    return render(request, 'manufacture/monthly_productions.html', {'error': error})
+
+
+# catalogs = Catalogue.objects.all().values('model', 'code')
+# dct = {}
+# for catalog in catalogs:
+#     if catalog['model'] not in dct:
+#         dct[catalog['model']] = 1
+#     else:
+#         dct[catalog['model']] += 1
+#
+# print(dct, catalogs)
+
+
+# col_model = Catalogue.objects.filter(model='Бенто').count()
+# print(col_model)
+
+
+# поиск по месячной выработке
+def search_monthly(request):
+    error = False
+    if 'q1' and 'q2' in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
+
+        if not q1:
+            error = True
+        elif not q2:
+            error = True
+        else:
+            quantities = (DailyProduction.objects
+                          .filter(date__range=(q1, q2))
+                          .values('catalogue__color',
+                                  'catalogue__code',
+                                  'catalogue__model',
+                                  'date',
+                                  'quantity')
+                          .annotate(total=Sum('quantity')).order_by('date'))
+
+            total = (DailyProduction.objects
+                     .values('date')
+                     .filter(date__range=(q1, q2)).annotate(total=Sum('quantity')).order_by('date'))
+            total_range = DailyProduction.objects.filter(date__range=(q1, q2)).order_by('date').aggregate(total=Sum('quantity'))['total']
+            return render(request, 'manufacture/monthly_production2.html',
                           {'quantities': quantities,
                            'q1': q1,
                            'q2': q2,
-                           'emp': emp}
+                           'total': total,
+                           'total_range': total_range,
+                           }
                           )
-    return render(request, 'manufacture/search_form.html', {'error': error})
+    return render(request, 'manufacture/search_month.html', {'error': error})
 
 
-# отображение ежедневного табеля сотрудников
-def view_daily_timesheet(request):
+def pandas_view(request):
     error = False
-    if 'q1' in request.GET:
+    if 'q1' and 'q2' in request.GET:
         q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
+
         if not q1:
             error = True
+        elif not q2:
+            error = True
         else:
-            timesheet = DailyTimesheet.objects.filter(date=q1)
-            total_emp = DailyTimesheet.objects.filter(date=q1).count()
-            context = {
-                'timesheet': timesheet,
-                'q1': q1,
-                'total_emp': total_emp,
-            }
-            return render(request, 'manufacture/daily_timesheet2.html', context)
+            item = DailyProduction.objects.filter(date__range=(q1, q2))
+            # df = read_frame(item)
+            # df = read_frame(item, fieldnames=['date', 'quantity', 'catalogue', 'package', 'defect_worker'])
+            rows = ['date']
+            cols = ['catalogue']
 
-    return render(request, 'manufacture/daily_timesheet2.html', {'error': error})
+            pt = item.to_pivot_table(values='quantity', rows=rows, cols=cols, aggfunc=np.sum, fill_value=0, margins=True)
+            mydict = {
+                "df": pt.to_html(),
+                    }
+            return render(request, 'manufacture/pandas_report.html', mydict)
+    return render(request, 'manufacture/search_month.html', {'error': error})
 
-
+# рассчет по ПУ
 def search_pu(request):
     error = False
     if 'q1' and 'q2' in request.GET:
@@ -293,18 +388,43 @@ def search_pu(request):
             #item = DailyProduction.objects.filter(date__range=(q1, q2))
             # df = read_frame(item)
             # df = read_frame(item, fieldnames=['date', 'quantity', 'catalogue', 'package', 'defect_worker'])
+
             rows = ['employee', 'rate']
             cols = ['date']
 
-            pt = quantities.to_pivot_table(
-                values=['daily_prod_quant', 'rate_day'],
-                rows=rows, cols=cols,
-                aggfunc=np.sum,
-                fill_value=0,
-                margins=True
-            )
+            pt = quantities.to_pivot_table(values=['daily_prod_quant', 'rate_day'], rows=rows, cols=cols, aggfunc=np.sum, fill_value=0, margins=True)
             mydict = {
                 "df": pt.to_html(),
                     }
             return render(request, 'manufacture/raschet_pu.html', mydict)
-    return render(request, 'manufacture/raschet_pu.html', {'error': error})
+    return render(request, 'manufacture/search_form.html', {'error': error})
+
+# поиск по станку ЭВА
+def search_eva(request):
+    error = False
+    if 'q1' and 'q2' in request.GET:
+        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
+        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
+
+        if not q1:
+            error = True
+        elif not q2:
+            error = True
+        else:
+            quantities = DailyTimesheet.objects.filter(date__range=(q1, q2), stanok='ЭВА')
+            rows = ['employee', 'rate']
+            cols = ['date']
+
+            pt = quantities.to_pivot_table(values=['daily_prod_quant', 'rate_day'], rows=rows, cols=cols, aggfunc=np.sum, fill_value=0, margins=True)
+            mydict = {
+                "df": pt.to_html(),
+                    }
+            return render(request, 'manufacture/raschet_eva.html', mydict)
+    return render(request, 'manufacture/search_form_eva.html', {'error': error})
+
+
+
+# общая зарплата
+def salary_total1(request):
+    salary_t = SalaryTotal.objects.all().order_by('-pk')
+    return render(request, 'manufacture/salary_total1.html', {'salary_t': salary_t})
