@@ -3,23 +3,23 @@ from django.db.models import Sum
 from django_pandas.managers import DataFrameManager
 
 
-class Sale(models.Model):
-    date = models.DateField(verbose_name="Дата")
-    client = models.ForeignKey('Client', on_delete=models.PROTECT, verbose_name='Клиент', blank=True)
-    model = models.ForeignKey('Catalogue', on_delete=models.CASCADE, verbose_name='Mодель')
-    size = models.CharField(max_length=40, verbose_name="Размер")
-    quantity = models.IntegerField(default=0, verbose_name="Кол-во")
-    price = models.DecimalField(max_digits=40, decimal_places=2, default=0, verbose_name="Цена сом")
-    total = models.DecimalField(max_digits=40, decimal_places=2, verbose_name="Сумма сом")
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
-    update_time = models.DateTimeField(auto_now=True, verbose_name='Время обновления')
-
-    def fetch_total(self):
-        self.total = self.quantity * self.price
-        return self.total
-
-    def __str__(self):
-        return f'{self.client}, {self.model}'
+# class Sale(models.Model):
+#     date = models.DateField(verbose_name="Дата")
+#     client = models.ForeignKey('Client', on_delete=models.PROTECT, verbose_name='Клиент', blank=True)
+#     model = models.ForeignKey('Catalogue', on_delete=models.CASCADE, verbose_name='Mодель')
+#     size = models.CharField(max_length=40, verbose_name="Размер")
+#     quantity = models.IntegerField(default=0, verbose_name="Кол-во")
+#     price = models.DecimalField(max_digits=40, decimal_places=2, default=0, verbose_name="Цена сом")
+#     total = models.DecimalField(max_digits=40, decimal_places=2, verbose_name="Сумма сом")
+#     create_time = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+#     update_time = models.DateTimeField(auto_now=True, verbose_name='Время обновления')
+#
+#     def fetch_total(self):
+#         self.total = self.quantity * self.price
+#         return self.total
+#
+#     def __str__(self):
+#         return f'{self.client}, {self.model}'
 
 
 class Catalogue(models.Model):
