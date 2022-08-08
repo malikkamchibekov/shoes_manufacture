@@ -1,0 +1,6 @@
+Django==4.0.4
+django-pillow
+django-tables2==2.4.1
+numpy
+pandas
+django-pandas
