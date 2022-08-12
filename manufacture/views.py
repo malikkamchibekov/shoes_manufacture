@@ -1,12 +1,13 @@
 import datetime
 # from datetime import datetime
-
+import pandas as pd
 import numpy as np
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
+from django_pandas.io import read_frame
 
 from .forms import *
 
@@ -352,18 +353,20 @@ def search_pu(request):
         elif not q2:
             error = True
         else:
-            quantities = DailyTimesheet.objects.filter(date__range=(q1, q2), stanok='ПУ')
-            # item = DailyProduction.objects.filter(date__range=(q1, q2))
-            # df = read_frame(item)
-            # df = read_frame(item, fieldnames=['date', 'quantity', 'catalogue', 'package', 'defect_worker'])
+            production = DailyProduction.objects.filter(date__range=(q1, q2))
+            timesheet = DailyTimesheet.objects.filter(date__range=(q1, q2), stanok='PU')
+            df_timesheet = read_frame(timesheet, fieldnames=['date', 'employee'])
+            df_production = read_frame(production, fieldnames=['date', 'quantity', 'rate_sum'])
+            df_total = pd.merge(left=df_production, right=df_timesheet, on='date')
 
-            rows = ['employee']
-            cols = ['date']
-
-            pt = quantities.to_pivot_table(values=['daily_prod_quant', 'rate_day'], rows=rows, cols=cols,
-                                           aggfunc=np.sum, fill_value=0, margins=True)
+            # rows = ['employee', ]
+            # cols = ['date']
+            #
+            # pt = quantities.to_pivot_table(values=['daily_prod_quant', 'rate_day'], rows=rows, cols=cols,
+            #                                aggfunc=np.sum, fill_value=0, margins=True)
+            # pt_1 = items.to_pivot_table(values=[''])
             mydict = {
-                "df": pt.to_html(),
+                "df": df_total.to_html(),
             }
             return render(request, 'manufacture/raschet_pu.html', mydict)
     return render(request, 'manufacture/search_form.html', {'error': error})
@@ -381,7 +384,7 @@ def search_eva(request):
         elif not q2:
             error = True
         else:
-            quantities = DailyTimesheet.objects.filter(date__range=(q1, q2), stanok='ЭВА')
+            quantities = DailyTimesheet.objects.filter(date__range=(q1, q2), stanok='EVA')
             rows = ['employee', 'rate']
             cols = ['date']
 

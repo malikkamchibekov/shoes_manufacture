@@ -40,7 +40,6 @@ class Sale(models.Model):
         return f'{self.client}, {self.model}'
 
 
-
 class Catalogue(models.Model):
     model = models.CharField(max_length=100, verbose_name='Модель')  # Артикул модели
     image = models.ImageField(upload_to='media/products/%Y/%m/%d', blank=True, verbose_name="Фото")  # Фото товара
@@ -151,9 +150,10 @@ class DailyProduction(models.Model):
     defect_worker = models.PositiveIntegerField(default=0, verbose_name="Брак рабочие")
     defect_machine = models.PositiveIntegerField(default=0, verbose_name="Брак станок")
     defect_saya = models.PositiveIntegerField(default=0, verbose_name="Брак САЯ")
-    rate = models.IntegerField(default=0, verbose_name="Ставка за работу")
-    created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', )
+    rate: int = models.IntegerField(default=0, verbose_name="Сдельная ставка за работу")
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+    rate_sum = models.IntegerField(default=0, verbose_name="Сумма оплаты за модель")
     objects = DataFrameManager()
 
     def fetch_package(self):
@@ -169,8 +169,13 @@ class DailyProduction(models.Model):
     def defect_sum(self):
         return (self.defect_machine + self.defect_worker + self.defect_saya) * 200  # брак по 200 сом за 1 брак
 
+    def save(self, *args, **kwargs):
+        self.rate_sum = self.rate * self.quantity
+        return super().save(*args, **kwargs)
+
 
 class User(AbstractUser):
     is_accountant = models.BooleanField(default=False)
     is_cashier = models.BooleanField(default=False)
     new_password = models.CharField(max_length=100)
+
