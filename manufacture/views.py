@@ -314,84 +314,7 @@ def view_daily_timesheet(request):
     return render(request, 'manufacture/daily_timesheet2.html', {'error': error})
 
 
-def view_monthly_production(request):
-    error = False
-    if 'q1' and 'q2' in request.GET:
-        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
-        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
-
-        if not q1:
-            error = True
-        elif not q2:
-            error = True
-        else:
-            productions = DailyProduction.objects.filter(date__range=(q1, q2)).aggregate(TOTAL=Sum('quantity'))['TOTAL']
-            products = Catalogue.objects.all()
-            # col_model = Catalogue.objects.filter(model='model').count()
-            return render(request, 'manufacture/monthly_productions.html',
-                          {'productions': productions,
-                           'q1': q1,
-                           'q2': q2,
-                           'products': products, }
-                          # 'col_model': col_model}
-                          )
-    return render(request, 'manufacture/monthly_productions.html', {'error': error})
-
-
-# catalogs = Catalogue.objects.all().values('model', 'code')
-# dct = {}
-# for catalog in catalogs:
-#     if catalog['model'] not in dct:
-#         dct[catalog['model']] = 1
-#     else:
-#         dct[catalog['model']] += 1
-#
-# print(dct, catalogs)
-
-
-# col_model = Catalogue.objects.filter(model='Бенто').count()
-# print(col_model)
-
-
-# поиск по месячной выработке
 def search_monthly(request):
-    error = False
-    if 'q1' and 'q2' in request.GET:
-        q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
-        q2 = datetime.datetime.strptime(request.GET['q2'], '%Y-%m-%d')
-
-        if not q1:
-            error = True
-        elif not q2:
-            error = True
-        else:
-            quantities = (DailyProduction.objects
-                          .filter(date__range=(q1, q2))
-                          .values('catalogue__color',
-                                  'catalogue__code',
-                                  'catalogue__model',
-                                  'date',
-                                  'quantity')
-                          .annotate(total=Sum('quantity')).order_by('date'))
-
-            total = (DailyProduction.objects
-                     .values('date')
-                     .filter(date__range=(q1, q2)).annotate(total=Sum('quantity')).order_by('date'))
-            total_range = \
-            DailyProduction.objects.filter(date__range=(q1, q2)).order_by('date').aggregate(total=Sum('quantity'))[
-                'total']
-            return render(request, 'manufacture/monthly_production2.html',
-                          {'quantities': quantities,
-                           'q1': q1,
-                           'q2': q2,
-                           'total': total,
-                           'total_range': total_range,
-                           }
-                          )
-    return render(request, 'manufacture/search_month.html', {'error': error})
-
-
-def pandas_view(request):
     error = False
     if 'q1' and 'q2' in request.GET:
         q1 = datetime.datetime.strptime(request.GET['q1'], '%Y-%m-%d')
@@ -413,8 +336,8 @@ def pandas_view(request):
             mydict = {
                 "df": pt.to_html(),
             }
-            return render(request, 'manufacture/pandas_report.html', mydict)
-    return render(request, 'manufacture/search_month.html', {'error': error})
+            return render(request, 'manufacture/monthly_production.html', mydict)
+    return render(request, 'manufacture/monthly_production.html', {'error': error})
 
 
 # рассчет по ПУ
