@@ -31,24 +31,23 @@
             </div>
 
             <div class="header-right">
-
-                <a href="/" class="btn btn-danger" title="Logout"><i class="fa fa-exclamation-circle fa-2x"></i></a>
-
+                <a href="{% url 'login' %}" class="btn btn-lg btn-primary" title="Войти"><i class="fa fa-sign-in"></i></a>
+                <a href="{% url 'logout' %}?next=/" class="btn btn-warning" title="Выйти"><i class="fa fa-exclamation-circle fa-2x"></i></a>
             </div>
         </nav>
         <!-- /. NAV TOP  -->
-        {% if user.is_authenticated%}
+        {% if user.is_authenticated %}
         <nav class="navbar-default navbar-side" role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav" id="main-menu">
                     <li>
                         <div class="user-img-div">
                             <img src="{% static 'assets/img/user.png' %}" class="img-thumbnail" />
-                                {{ user.first_name }} {{ user.last_name }}
+                                Добро пожаловать,
                             <div class="inner-text">
-                                USER
-                            <br />
-                                <small>user</small>
+                                {{ user.first_name }}
+                            <br/>
+                                <small>{{ user.last_name }}!</small>
                             </div>
                         </div>
 
@@ -110,7 +109,7 @@
                                 <a href="clients"><i class="fa fa-toggle-on"></i>КЛИЕНТЫ</a>
                             </li>
                             <li>
-                                <a href="salary_total"><i class="fa fa-bell "></i>ПРОДАЖИ</a>
+                                <a href="{% url 'sales' %}"><i class="fa fa-bell "></i>ПРОДАЖИ</a>
                             </li>
                         </ul>
                     </li>
@@ -127,7 +126,7 @@
                             </li>
                              {% if user.is_superuser %}
                             <li>
-                                <a href="register_new"><i class="fa fa-flash "></i>РЕГИСТРАЦИЯ НОВЫХ СОТРУДНИКОВ</a>
+                                <a href="{% url 'register_new' %}"><i class="fa fa-flash "></i>РЕГИСТРАЦИЯ НОВЫХ ПОЛЬЗОВАТЕЛЕЙ</a>
                             </li>
                              {% endif %}
 

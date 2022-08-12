@@ -2,6 +2,7 @@ from django import forms
 from django.forms import SelectDateWidget
 from .models import *
 
+
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-conntrol'}))
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput(attrs={'class': 'form-conntrol'}))
@@ -15,6 +16,7 @@ class UserRegistrationForm(forms.ModelForm):
         if cd['password'] != cd['password2']:
             raise forms.ValidationError('Passwords don\'t match.')
         return cd['password2']
+
 
 class LoginForm(forms.Form):
     username = forms.CharField()
