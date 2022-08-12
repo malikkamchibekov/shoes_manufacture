@@ -60,7 +60,7 @@ label {
                                 <div class="col-md-6 text-center mb-5"></div>
                             </div>
                             {% csrf_token %}
-                                <form action="{% url 'daily_timesheet2' %}" method="post">
+                                <form action="" method="post">
                                     {% csrf_token %}
                                     <div class="row">
                                         <div class="col-25">
@@ -78,28 +78,28 @@ label {
                                             {{ form.employee }}
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-25">
-                                            <label>СТАВКА СДЕЛЬНАЯ</label>
-                                        </div>
-                                        <div class="col-75">
-                                            {{ form.rate }}
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-25">
-                                            <label>КОЛ-ВО ПАР СДЕЛАННОЕ ЗА ДЕНЬ</label>
-                                        </div>
-                                        <div class="col-75">
-                                            {{ form.daily_prod_quant }}
-                                        </div>
-                                    </div>
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-25">-->
+<!--                                            <label>СТАВКА СДЕЛЬНАЯ</label>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-75">-->
+<!--                                            {{ form.rate }}-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="row">-->
+<!--                                        <div class="col-25">-->
+<!--                                            <label>КОЛ-ВО ПАР СДЕЛАННОЕ ЗА ДЕНЬ</label>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-75">-->
+<!--                                            {{ form.daily_prod_quant }}-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="row">
                                         <div class="col-25">
                                             <label>ВИД СТАНКА</label>
                                         </div>
                                         <div class="col-75">
-                                            {{ form.machine_tool }}
+                                            {{ form.stanok }}
                                         </div>
                                     </div>
                                     <div class="row">

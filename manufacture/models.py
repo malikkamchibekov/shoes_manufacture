@@ -105,20 +105,18 @@ class Client(models.Model):
 
     def __str__(self):
         return f'{self.name}, {self.phone}'
+
+
 STATUSES = [
-        ('ПУ', 'ПУ'),
-        ('ЭВА', 'ЭВА'),
+        ('PU', 'ПУ'),
+        ('EVA', 'ЭВА'),
     ]
 
 
 class DailyTimesheet(models.Model):
     date = models.DateField()
     employee = models.ForeignKey('Employee', on_delete=models.RESTRICT, )
-    rate = models.IntegerField(default=0, verbose_name="Ставка за работу") #
-    daily_prod_quant = models.IntegerField(default=0, verbose_name="Количество выработки за день") # Количество выработки работника на станке
-    rate_day = models.PositiveIntegerField(blank=True, verbose_name='Модель')
     stanok = models.CharField(max_length=40, blank=True, choices=STATUSES)
-
     objects = DataFrameManager()
 
     class Meta:
@@ -129,7 +127,7 @@ class DailyTimesheet(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.daily_prod_quant}'
+        return f'{self.date}, {self.employee}'
 
     @property
     def emp_sum(self):
@@ -143,10 +141,6 @@ class DailyTimesheet(models.Model):
             return DailyTimesheet.objects.filter(date=self.date).count()
         return DailyTimesheet.objects.none()
 
-    def save(self, *args, **kwargs):
-        self.rate_day = self.rate * self.daily_prod_quant
-        return super().save(*args, **kwargs)
-
 
 class DailyProduction(models.Model):
     date = models.DateField()
@@ -157,6 +151,7 @@ class DailyProduction(models.Model):
     defect_worker = models.PositiveIntegerField(default=0, verbose_name="Брак рабочие")
     defect_machine = models.PositiveIntegerField(default=0, verbose_name="Брак станок")
     defect_saya = models.PositiveIntegerField(default=0, verbose_name="Брак САЯ")
+    rate = models.IntegerField(default=0, verbose_name="Ставка за работу")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', )
     updated_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     objects = DataFrameManager()

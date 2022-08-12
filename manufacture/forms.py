@@ -51,7 +51,7 @@ class EmployeeForm(forms.ModelForm):
 class DailyProductionForm(forms.ModelForm):
     class Meta:
         model = DailyProduction
-        fields = ('date', 'catalogue', 'quantity', 'package', 'defect_worker', 'defect_machine', 'defect_saya')
+        fields = ('date', 'catalogue', 'quantity', 'package', 'defect_worker', 'defect_machine', 'defect_saya', 'rate')
 
     date = forms.DateField(widget=SelectDateWidget(empty_label="Nothing"))
 
@@ -66,7 +66,7 @@ class DailyTimesheetForm(forms.ModelForm):
 
     class Meta:
         model = DailyTimesheet
-        fields = ['date', 'employee', 'stanok', 'rate', 'daily_prod_quant']
+        fields = ['date', 'employee', 'stanok',]
 
     date = forms.DateField(widget=SelectDateWidget(empty_label="Nothing"))
 

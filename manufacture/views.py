@@ -1,26 +1,14 @@
-from django.http import HttpResponseNotFound
-from django.shortcuts import render, redirect
-from .forms import *
-from datetime import datetime
-from django_tables2 import SingleTableView, tables, RequestConfig
-from django.db.models import Sum, Count
 import datetime
-from django.shortcuts import render
-from .models import *
-import pandas as pd
-from django_pandas.io import read_frame
-import numpy as np
-from .forms import LoginForm, UserRegistrationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
+# from datetime import datetime
 
+import numpy as np
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
-from .models import *
+
 from .forms import *
-from datetime import datetime
-from django.contrib.auth.decorators import user_passes_test
 
 
 # class DailyProductionTable(tables.Table):
@@ -314,12 +302,12 @@ def view_daily_timesheet(request):
         else:
             timesheet = DailyTimesheet.objects.filter(date=q1)
             total_emp = DailyTimesheet.objects.filter(date=q1).count()
-            total_prod = DailyTimesheet.objects.filter(date=q1).aggregate(TOTAL=Sum('daily_prod_quant'))['TOTAL']
+            # total_prod = DailyTimesheet.objects.filter(date=q1).aggregate(TOTAL=Sum('daily_prod_quant'))['TOTAL']
             context = {
                 'timesheet': timesheet,
                 'q1': q1,
                 'total_emp': total_emp,
-                'total_prod': total_prod,
+                # 'total_prod': total_prod,
             }
             return render(request, 'manufacture/daily_timesheet2.html', context)
 
@@ -446,7 +434,7 @@ def search_pu(request):
             # df = read_frame(item)
             # df = read_frame(item, fieldnames=['date', 'quantity', 'catalogue', 'package', 'defect_worker'])
 
-            rows = ['employee', 'rate']
+            rows = ['employee']
             cols = ['date']
 
             pt = quantities.to_pivot_table(values=['daily_prod_quant', 'rate_day'], rows=rows, cols=cols,
